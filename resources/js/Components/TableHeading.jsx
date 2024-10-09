@@ -18,7 +18,7 @@ export default function TableHeading({
               className={
                 "w-4 " +
                 (sort_field === name && sort_direction === "asc"
-                  ? "text-white"
+                  ? "text-black"
                   : "")
               }
             />
@@ -26,7 +26,7 @@ export default function TableHeading({
               className={
                 "w-4 -mt-2 " +
                 (sort_field === name && sort_direction === "desc"
-                  ? "text-white"
+                  ? "text-black"
                   : "")
               }
             />
