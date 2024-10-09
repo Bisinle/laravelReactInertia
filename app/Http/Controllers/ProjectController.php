@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
+use App\Http\Resources\ProjectResource;
 use App\Models\Project;
 
 class ProjectController extends Controller
@@ -13,7 +14,24 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        return inertia('Projects/Index', []);
+
+
+        $query = Project::query();
+
+        //^ if the request has a name in it, we want to filter by that name
+        if (request("name")) {
+            $query->where("name", "like", "%" . request("name") . "%");
+        }
+
+        //^ if the request has a status in it, we want to filter by that status
+        if (request("status")) {
+            $query->where("status", request("status"));
+        }
+        $projects = $query->paginate(6);
+        return inertia('Projects/Index', [
+            'projects' => ProjectResource::collection($projects),
+            'queryParams' => request()->query() ?: null,
+        ]);
     }
 
     /**
