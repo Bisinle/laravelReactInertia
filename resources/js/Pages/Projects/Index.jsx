@@ -1,10 +1,10 @@
 import React from "react";
-import Authenticated from "@/Layouts/AuthenticatedLayout";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 
 function Index({ auth, porjects }) {
   return (
-    <Authenticated
+    <AuthenticatedLayout
       user={auth.user}
       header={
         <h2 className="text-xl font-semibold leading-tight text-gray-800">
@@ -23,7 +23,7 @@ function Index({ auth, porjects }) {
           </div>
         </div>
       </div>
-    </Authenticated>
+    </AuthenticatedLayout>
   );
 }
 

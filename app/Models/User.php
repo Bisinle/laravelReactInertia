@@ -16,10 +16,18 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+    use HasFactory, Notifiable;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'name',
         'email',
         'password',
+        'email_verified_at'
     ];
 
     /**
