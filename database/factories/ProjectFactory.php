@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,16 +17,26 @@ class ProjectFactory extends Factory
      */
     public function definition(): array
     {
+        $createdByUser = User::inRandomOrder()->first();
+
+        // 50% chance of updated_by being the same as created_by
+        $updatedByUser = $this->faker->boolean(50)
+            ? $createdByUser
+            : User::where('id', '!=', $createdByUser->id)->inRandomOrder()->first();
+
+        $createdAt = $this->faker->dateTimeBetween('-1 year', 'now');
+        $updatedAt = $this->faker->dateTimeBetween($createdAt, 'now');
+
         return [
-            'name' => fake()->sentence(),
-            'description' => fake()->realText(),
-            'due_date' => fake()->dateTimeBetween('now', '+1 year'),
-            'status' => fake()->randomElement(['pending', 'in_progress', 'completed']),
-            'image_path' => fake()->imageUrl(),
-            'created_by' => 1,
-            'updated_by' => 1,
-            'created_at' => time(),
-            'updated_at' => time(),
+            'name' => $this->faker->sentence(),
+            'description' => $this->faker->realText(),
+            'due_date' => $this->faker->dateTimeBetween('now', '+1 year'),
+            'status' => $this->faker->randomElement(['pending', 'in_progress', 'completed']),
+            'image_path' => $this->faker->imageUrl(),
+            'created_by' => $createdByUser->id,
+            'updated_by' => $updatedByUser->id,
+            'created_at' => $createdAt,
+            'updated_at' => $updatedAt,
         ];
     }
 }

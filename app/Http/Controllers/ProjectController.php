@@ -26,6 +26,11 @@ class ProjectController extends Controller
         if (request("name")) {
             $query->where("name", "like", "%" . request("name") . "%");
         }
+        
+        //^ if the request has a priority in it, we want to filter by that priority
+        if (request("priority")) {
+            $query->where("priority", request("priority"));
+        }
 
         //^ if the request has a status in it, we want to filter by that status
         if (request("status")) {
@@ -89,6 +94,7 @@ class ProjectController extends Controller
     public function destroy(Project $project)
     {
         $name = $project->name;
+        dd($name);
         $project->delete();
         if ($project->image_path) {
             Storage::disk('public')->deleteDirectory(dirname($project->image_path));

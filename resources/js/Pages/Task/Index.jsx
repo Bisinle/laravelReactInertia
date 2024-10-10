@@ -5,14 +5,16 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import {
   TASK_STATUS_CLASS_MAP,
   TASK_STATUS_TEXT_MAP,
+  TASK_PRIORITY_CLASS_MAP,
+  TASK_PRIORITY_TEXT_MAP,
 } from "@/constants.jsx";
 import { Head, Link, router } from "@inertiajs/react";
 import TableHeading from "@/Components/TableHeading";
 
 export default function Index({ auth, tasks, queryParams = null, success }) {
   //^ by default it is null, but can contain a name and a direction from backend
- console.log(tasks);
- 
+  console.log(tasks);
+
   queryParams = queryParams || {};
 
   //^ search by name function
@@ -23,7 +25,7 @@ export default function Index({ auth, tasks, queryParams = null, success }) {
       delete queryParams[name];
     }
 
-    router.get(route("project.index"), queryParams);
+    router.get(route("task.index"), queryParams);
   };
 
   const onKeyPress = (name, e) => {
@@ -43,14 +45,16 @@ export default function Index({ auth, tasks, queryParams = null, success }) {
       queryParams.sort_field = name;
       queryParams.sort_direction = "asc";
     }
-    router.get(route("project.index"), queryParams);
+    router.get(route("task.index"), queryParams);
   };
 
-  const deleteProject = (project) => {
+  
+
+  const deleteTask = (task) => {
     if (!window.confirm("Are you sure you want to delete the project?")) {
       return;
     }
-    router.delete(route("project.destroy", project.id));
+    router.delete(route("task.destroy", task.id));
   };
 
   return (
@@ -62,7 +66,7 @@ export default function Index({ auth, tasks, queryParams = null, success }) {
             Tasks
           </h2>
           <Link
-            href={route("project.create")}
+            href={route("task.create")}
             className="bg-emerald-500 py-1 px-3 text-white rounded shadow transition-all hover:bg-emerald-600"
           >
             Add new
@@ -131,7 +135,14 @@ export default function Index({ auth, tasks, queryParams = null, success }) {
                       >
                         Status
                       </TableHeading>
-
+                      <TableHeading
+                        name="priority"
+                        sort_field={queryParams.sort_field}
+                        sort_direction={queryParams.sort_direction}
+                        sortChanged={sortChanged}
+                      >
+                        Priority
+                      </TableHeading>
                       <TableHeading
                         name="created_at"
                         sort_field={queryParams.sort_field}
@@ -150,6 +161,8 @@ export default function Index({ auth, tasks, queryParams = null, success }) {
                         Due Date
                       </TableHeading>
                       <th className="px-3 py-3">Created By</th>
+                      <th className="px-3 py-3">Updated By</th>
+                      <th className="px-3 py-3">Assigned To</th>
                       <th className="px-3 py-3 text-right">Actions</th>
                     </tr>
                   </thead>
@@ -166,7 +179,7 @@ export default function Index({ auth, tasks, queryParams = null, success }) {
                         </td>
                         <th className="px-3 py-2 text-gray-100 text-nowrap hover:underline">
                           <Link href={route("task.show", task.id)}>
-                            {task.name}
+                            {task.name.toString().substring(0, 20)}
                           </Link>
                         </th>
                         <td className="px-3 py-2">
@@ -179,6 +192,16 @@ export default function Index({ auth, tasks, queryParams = null, success }) {
                             {TASK_STATUS_TEXT_MAP[task.status]}
                           </span>
                         </td>
+                        <td className="px-3 py-2">
+                          <span
+                            className={
+                              "px-2 py-1 rounded text-white " +
+                              TASK_PRIORITY_CLASS_MAP[task.priority]
+                            }
+                          >
+                            {TASK_PRIORITY_TEXT_MAP[task.priority]}
+                          </span>
+                        </td>
                         <td className="px-3 py-2 text-nowrap">
                           {task.created_at}
                         </td>
@@ -186,6 +209,7 @@ export default function Index({ auth, tasks, queryParams = null, success }) {
                           {task.due_date}
                         </td>
                         <td className="px-3 py-2">{task.createdBy.name}</td>
+                        <td className="px-3 py-2">{task.updatedBy.name}</td>
                         <td className="px-3 py-2 text-nowrap">
                           <Link
                             href={route("task.edit", task.id)}
@@ -194,7 +218,7 @@ export default function Index({ auth, tasks, queryParams = null, success }) {
                             Edit
                           </Link>
                           <button
-                            onClick={(e) => deletetask(project)}
+                            onClick={(e) => deleteTask(task)}
                             className="font-medium text-red-600 dark:text-red-500 hover:underline mx-1"
                           >
                             Delete
@@ -209,7 +233,7 @@ export default function Index({ auth, tasks, queryParams = null, success }) {
             </div>
           </div>
         </div>
-      </div> 
+      </div>
     </AuthenticatedLayout>
   );
 }
