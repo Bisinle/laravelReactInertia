@@ -118,16 +118,32 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
-        //
+        return inertia('Project/Edit', [
+            'project' => new ProjectResource($project),
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
+
     public function update(UpdateProjectRequest $request, Project $project)
     {
-        //
+        $data = $request->validated();
+        $image = $data['image'] ?? null;
+        $data['updated_by'] = Auth::id();
+        if ($image) {
+            if ($project->image_path) {
+                Storage::disk('public')->deleteDirectory(dirname($project->image_path));
+            }
+            $data['image_path'] = $image->store('project/' . Str::random(), 'public');
+        }
+        $project->update($data);
+
+        return to_route('project.index')
+            ->with('success', "Project \"$project->name\" was updated");
     }
+
 
     /**
      * Remove the specified resource from storage.
