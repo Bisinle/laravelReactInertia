@@ -9,25 +9,12 @@ import {
 import { Head, Link, router } from "@inertiajs/react";
 import TableHeading from "@/Components/TableHeading";
 import { useEffect, useState } from "react";
+import CrudMessage from "../../Components/CrudMessage";
 
 export default function Index({ auth, projects, queryParams = null, success }) {
   //^ by default it is null, but can contain a name and a direction from backend
   queryParams = queryParams || {};
-  const [successTimer, setSuccessTimer] = useState(false); // Added for demonstration
 
-  useEffect(() => {
-    let timer
-    if (success){
-
-      setSuccessTimer(true);
-      timer = setTimeout(() => {
-        setSuccessTimer(false);
-      }, 3000);
-    }
-
-    // Cleanup function
-    return () => clearTimeout(timer);
-  }, [success]);
   //^ search by name function
   const searchFieldChanged = (name, value) => {
     if (value) {
@@ -87,11 +74,8 @@ export default function Index({ auth, projects, queryParams = null, success }) {
 
       <div className="py-12">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-          {successTimer && (
-            <div className="bg-emerald-500 py-2 px-4 text-white rounded mb-4">
-              {success}
-            </div>
-          )}
+          <CrudMessage success={success} />
+
           <div className=" filters flex gap-2 mb-5">
             <TextInput
               className="w-full"
