@@ -8,11 +8,26 @@ import {
 } from "@/constants.jsx";
 import { Head, Link, router } from "@inertiajs/react";
 import TableHeading from "@/Components/TableHeading";
+import { useEffect, useState } from "react";
 
 export default function Index({ auth, projects, queryParams = null, success }) {
   //^ by default it is null, but can contain a name and a direction from backend
   queryParams = queryParams || {};
+  const [successTimer, setSuccessTimer] = useState(false); // Added for demonstration
 
+  useEffect(() => {
+    let timer
+    if (success){
+
+      setSuccessTimer(true);
+      timer = setTimeout(() => {
+        setSuccessTimer(false);
+      }, 3000);
+    }
+
+    // Cleanup function
+    return () => clearTimeout(timer);
+  }, [success]);
   //^ search by name function
   const searchFieldChanged = (name, value) => {
     if (value) {
@@ -72,7 +87,7 @@ export default function Index({ auth, projects, queryParams = null, success }) {
 
       <div className="py-12">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-          {success && (
+          {successTimer && (
             <div className="bg-emerald-500 py-2 px-4 text-white rounded mb-4">
               {success}
             </div>
@@ -162,7 +177,7 @@ export default function Index({ auth, projects, queryParams = null, success }) {
                         <td className="px-3 py-2">
                           <img src={project.image_path} style={{ width: 60 }} />
                         </td>
-                        <th className="px-3 py-2 text-gray-100 text-nowrap hover:underline">
+                        <th className="px-3 py-2 text-gray-100 text-nowrap  text-gray-600 dark:text-gray-200 hover:underline">
                           <Link href={route("project.show", project.id)}>
                             {project.name}
                           </Link>

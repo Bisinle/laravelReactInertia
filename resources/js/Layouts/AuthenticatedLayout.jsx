@@ -180,7 +180,7 @@ export default function Authenticated({ header, children }) {
         </header>
       )}
 
-      <main>{children}</main>
+      <main className="bg-gray-200">{children}</main>
     </div>
   );
 }
