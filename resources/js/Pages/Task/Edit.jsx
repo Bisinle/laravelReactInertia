@@ -7,17 +7,19 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { CustomStepper } from "../../Components/MultiStepForm/CustomStepper";
 import { StepForm } from "../../Components/MultiStepForm/StepFrom";
 
-export default function Create({ auth, projects, users }) {
+export default function Edit({ auth, task, projects, users }) {
   const { data, setData, post, processing, errors, reset } = useForm({
-    image: "",
-    name: "",
-    description: "",
-    due_date: "",
-    status: "",
-    priority: "",
-    assigned_user_id: "",
-    project_id: "",
+    image: task.image_path ||"",
+    name: task.name || "",
+    description: task.description || "",
+    due_date: task.due_date || "",
+    status: task.status || "",
+    priority: task.priority || "",
+    assigned_user_id: task.assignedUser.name || "",
+    project_id: task.project.name || "",
+    _method: "PUT",
   });
+  console.log(task);
 
   const [activeStep, setActiveStep] = useState(0);
   const [isLastStep, setIsLastStep] = useState(false);
@@ -38,7 +40,8 @@ export default function Create({ auth, projects, users }) {
   const handleSubmit = useCallback(
     (e) => {
       e.preventDefault();
-      post(route("task.store"), {
+
+      post(route("task.update",task.id), {
         preserveState: true,
         preserveScroll: true,
       });
@@ -58,11 +61,11 @@ export default function Create({ auth, projects, users }) {
       user={auth.user}
       header={
         <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-          Create new Task
+          {`Edit Task ( ${task.name} )`}
         </h2>
       }
     >
-      <Head title="Create Task" />
+      <Head title={`Edit Task`} />
       <div className="py-12">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
           <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
@@ -88,6 +91,7 @@ export default function Create({ auth, projects, users }) {
                 projects={projects}
                 users={users}
               />
+              Edit
               <div className="mt-6 flex justify-between">
                 <Button
                   color="blue"
