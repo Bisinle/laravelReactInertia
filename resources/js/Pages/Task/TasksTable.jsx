@@ -133,6 +133,8 @@ export default function TasksTable({
                 Due Date
               </TableHeading>
               <th className="px-3 py-3">Created By</th>
+              <th className="px-3 py-3">assigned User</th>
+              
               <th className="px-3 py-3 text-right">Actions</th>
             </tr>
           </thead>
@@ -176,6 +178,7 @@ export default function TasksTable({
                 <td className="px-3 py-2 text-nowrap">{task.created_at}</td>
                 <td className="px-3 py-2 text-nowrap">{task.due_date}</td>
                 <td className="px-3 py-2">{task.createdBy.name}</td>
+                <td className="px-3 py-2">{task.assignedUser.name}</td>
                 <td className="px-3 py-2 text-nowrap">
                   <Link
                     href={route("task.edit", task.id)}
