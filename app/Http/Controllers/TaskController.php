@@ -89,10 +89,8 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        $project = $task->project;
         return inertia('Task/Show', [
             'task' => new TaskResource($task),
-            'project' => new ProjectResource($project),
         ]);
     }
 

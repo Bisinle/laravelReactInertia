@@ -7,8 +7,7 @@ import {
   TASK_PRIORITY_TEXT_MAP,
 } from "@/constants.jsx";
 import TasksTable from "../Task/TasksTable";
-export default function Show({ auth, success, task, project, queryParams }) {
-  console.log(project);
+export default function Show({ auth, success, task, queryParams }) {
 
   return (
     <AuthenticatedLayout
