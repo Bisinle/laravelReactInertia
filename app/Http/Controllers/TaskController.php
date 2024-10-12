@@ -77,7 +77,7 @@ class TaskController extends Controller
         if ($image) {
             $data['image_path'] = $image->store('tasks/' . Str::random(), 'public');
         }
-        
+
         // dd($request->all());
         Task::create($data);
         return to_route('task.index')
@@ -89,7 +89,11 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        //
+        $project = $task->project;
+        return inertia('Task/Show', [
+            'task' => new TaskResource($task),
+            'project' => new ProjectResource($project),
+        ]);
     }
 
     /**
