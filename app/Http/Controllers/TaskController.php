@@ -6,6 +6,7 @@ use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Http\Resources\TaskResource;
 use App\Models\Task;
+use Illuminate\Support\Facades\Storage;
 
 class TaskController extends Controller
 {
@@ -39,7 +40,7 @@ class TaskController extends Controller
         return inertia('Task/Index', [
             'tasks' => TaskResource::collection($tasks),
             'queryParams' => request()->query() ?: null,
-            'success'=> session('success'),
+            'success' => session('success'),
         ]);
     }
 
@@ -91,6 +92,9 @@ class TaskController extends Controller
         $name = $task->name;
         $task->delete();
 
+        if ($task->image_path) {
+            Storage::disk('public')->deleteDirectory(dirname($task->image_path));
+        }
         return to_route("task.index")
             ->with("success", "Task\"$name\" was deleted");
     }
