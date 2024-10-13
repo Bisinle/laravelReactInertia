@@ -22,7 +22,7 @@ class ProjectFactory extends Factory
         // 50% chance of updated_by being the same as created_by
         $updatedByUser = $this->faker->boolean(50)
             ? $createdByUser
-            : User::where('id', '!=', $createdByUser->id)->inRandomOrder()->first();
+            : User::where('id', '!=', $createdByUser->id)->inRandomOrder()->first()??$createdByUser;
 
         $createdAt = $this->faker->dateTimeBetween('-1 year', 'now');
         $updatedAt = $this->faker->dateTimeBetween($createdAt, 'now');

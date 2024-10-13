@@ -94,19 +94,21 @@ export default function Edit({ auth, task, projects, users }) {
               Edit
               <div className="mt-6 flex justify-between">
                 <Button
-                  color="blue"
-                  onClick={handlePrev}
+            className="bg-indigo-500 py-3 px-4 text-white rounded shadow transition-all hover:bg-indigo-600"
+            onClick={handlePrev}
                   disabled={isFirstStep}
                 >
                   Prev
                 </Button>
                 {isLastStep ? (
-                  <Button color="indigo" type="submit" disabled={processing}>
+                  <Button 
+                  className="bg-indigo-500 py-3 px-4 text-white rounded shadow transition-all hover:bg-indigo-600"
+                  type="submit" disabled={processing}>
                     Submit
                   </Button>
                 ) : (
                   <Button
-                    color="indigo"
+                    className="bg-indigo-500 py-3 px-4 text-white rounded shadow transition-all hover:bg-indigo-600"
                     onClick={handleNext}
                     disabled={isLastStep}
                   >
