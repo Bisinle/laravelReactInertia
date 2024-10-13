@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
         // Create 20 projects
         Project::factory(20)
             ->count(30)
-            ->hasTasks(30)
+            ->hasTasks(30) 
             ->create();
 
        

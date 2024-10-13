@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Project;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,11 +19,13 @@ class ProjectFactory extends Factory
     public function definition(): array
     {
         $createdByUser = User::inRandomOrder()->first();
-
+        if (!$createdByUser) {
+            throw new \Exception("No users found in the database. Please seed the users table first.");
+        }
         // 50% chance of updated_by being the same as created_by
         $updatedByUser = $this->faker->boolean(50)
             ? $createdByUser
-            : User::where('id', '!=', $createdByUser->id)->inRandomOrder()->first()??$createdByUser;
+            : User::where('id', '!=', $createdByUser->id)->inRandomOrder()->first() ?? $createdByUser;
 
         $createdAt = $this->faker->dateTimeBetween('-1 year', 'now');
         $updatedAt = $this->faker->dateTimeBetween($createdAt, 'now');
@@ -38,5 +41,13 @@ class ProjectFactory extends Factory
             'created_at' => $createdAt,
             'updated_at' => $updatedAt,
         ];
+    }
+    public function configure()
+    {
+        return $this->afterCreating(function (Project $project) {
+            // Set the status after creating the project and its tasks
+            $project->status = $this->faker->randomElement(['pending', 'in_progress', 'completed']);
+            $project->save(); // This will trigger the mutator
+        });
     }
 }

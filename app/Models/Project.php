@@ -34,4 +34,13 @@ class Project extends Model
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
+
+    public function setStatusAttribute($value)
+    {
+        $this->attributes['status'] = $value;
+
+        if ($value === 'completed') {
+            $this->tasks()->update(['status' => 'completed']);
+        }
+    }
 }
