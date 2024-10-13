@@ -26,7 +26,7 @@ const CrudMessage = ({
   return (
     <div
       {...props}
-      className={`bg-emerald-500 py-2 px-4 text-white rounded mb-4 ${className}`}
+      className={`bg-indigo-500 py-2 px-4 text-white rounded mb-4 ${className}`}
     >
       {success }
     </div>

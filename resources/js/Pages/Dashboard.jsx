@@ -1,3 +1,4 @@
+import Pagination from "@/Components/Pagination";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { TASK_STATUS_CLASS_MAP, TASK_STATUS_TEXT_MAP } from "@/constants";
 import { Head, Link } from "@inertiajs/react";
@@ -12,6 +13,9 @@ export default function Dashboard({
   myCompletedTasks,
   activeTasks,
 }) {
+console.log(activeTasks);
+
+  
   return (
     <AuthenticatedLayout
       user={auth.user}
@@ -105,6 +109,7 @@ export default function Dashboard({
                   ))}
                 </tbody>
               </table>
+              <Pagination links={activeTasks.meta.links} />
             </div>
           </div>
         </div>
