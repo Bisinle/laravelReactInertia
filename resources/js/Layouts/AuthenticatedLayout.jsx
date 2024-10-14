@@ -37,6 +37,12 @@ export default function Authenticated({ header, children }) {
                   Projects
                 </NavLink>
                 <NavLink
+                  href={route("messages.index")}
+                  active={route().current("messages.index")}
+                >
+                  Messages
+                </NavLink>
+                <NavLink
                   href={route("task.index")}
                   active={route().current("task.index")}
                 >
