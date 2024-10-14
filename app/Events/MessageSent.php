@@ -2,7 +2,6 @@
 
 namespace App\Events;
 
-use App\Models\Message;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -17,7 +16,7 @@ class MessageSent implements ShouldBroadcast
 
     public $message;
 
-    public function __construct(Message $message)
+    public function __construct($message)
     {
         $this->message = $message;
     }
@@ -30,11 +29,7 @@ class MessageSent implements ShouldBroadcast
     public function broadcastWith()
     {
         return [
-            'id' => $this->message->id,
-            'content' => $this->message->content,
-            'sender_id' => $this->message->sender_id,
-            'recipient_id' => $this->message->recipient_id,
-            'created_at' => $this->message->created_at,
+            'message' => $this->message
         ];
     }
 }

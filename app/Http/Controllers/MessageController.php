@@ -23,32 +23,49 @@ class MessageController extends Controller
     }
     public function show(User $user)
     {
+        $messages = $this->getMessages($user);
+
         return Inertia::render('Messages/Show', [
             'user' => $user,
-            'messages' => $this->getMessages($user),
+            'messages' => $messages,
         ]);
     }
 
-    public function store(Request $request, User $user)
-    {
-        $request->validate([
-            'content' => 'required|string',
-        ]);
+    // public function store(Request $request, User $user)
+    // {
+    //     $request->validate([
+    //         'content' => 'required|string',
+    //     ]);
 
-        $message = Message::create([
-            'sender_id' => auth()->id(),
-            'recipient_id' => $user->id,
-            'content' => $request->content,
-        ]);
+    //     $message = Message::create([
+    //         'sender_id' => auth()->id(),
+    //         'recipient_id' => $user->id,
+    //         'content' => $request->content,
+    //     ]);
 
-        broadcast(new MessageSent($message))->toOthers();
+    //     broadcast(new MessageSent($message))->toOthers();
 
-        return back()->with([
-            'messages' => $this->getMessages($user),
-        ]);
-    }
+    //     return back()->with([
+    //         'messages' => $this->getMessages($user),
+    //     ]);
+    // }
 
-    private function getMessages(User $user)
+public function store(Request $request, User $user)
+{
+    $request->validate([
+        'content' => 'required|string',
+    ]);
+
+    $message = Message::create([
+        'sender_id' => auth()->id(),
+        'recipient_id' => $user->id,
+        'content' => $request->content,
+    ]);
+
+    broadcast(new MessageSent($message))->toOthers();
+
+    return back();
+}    private function getMessages(User $user)
     {
         return Message::where(function ($query) use ($user) {
             $query->where('sender_id', auth()->id())

@@ -1,47 +1,41 @@
 import React, { useState, useEffect } from "react";
-import { useForm, usePage } from "@inertiajs/react";
-import { Inertia } from "@inertiajs/inertia";
+import { useForm, usePage } from "@inertiajs/inertia-react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
-const Show = ({ auth, user }) => {
-  const { messages: initialMessages } = usePage().props;
+const Show = ({ auth, user, messages: initialMessages }) => {
+  // const { messages: initialMessages } = usePage().props;
   const [messages, setMessages] = useState(initialMessages);
   const { data, setData, post, processing, reset } = useForm({
     content: "",
   });
 
   useEffect(() => {
-    // Listen for new messages
     const channel = window.Echo.private(`chat.${auth.user.id}`);
-    channel.listen("MessageSent", (e) => {
-      console.log("Received message:", e);
-      setMessages((prevMessages) => [...prevMessages, e.message]);
+    channel.listen("message", (data) => {
+      setMessages((prevMessages) => [...prevMessages, data]);
     });
 
     return () => {
-      channel.stopListening("MessageSent");
+      channel.stopListening("message");
     };
   }, []);
 
   const submit = (e) => {
     e.preventDefault();
-    const tempId = Date.now();
-    const tempMessage = {
-      id: tempId,
-      content: data.content,
-      sender_id: auth.user.id,
-      created_at: new Date().toISOString(),
-    };
-
-    // Optimistic update
-    setMessages((prevMessages) => [...prevMessages, tempMessage]);
-
     post(route("messages.store", user.id), {
       preserveState: true,
       preserveScroll: true,
-      onSuccess: (page) => {
-        // Replace the temporary message with the real one from the server
-        setMessages(page.props.messages);
+      onSuccess: () => {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          {
+            id: Date.now(),
+            content: data.content,
+            sender_id: auth.user.id,
+            recipient_id: user.id,
+            created_at: new Date().toISOString(),
+          },
+        ]);
         reset("content");
       },
     });
