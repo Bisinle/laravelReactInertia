@@ -9,6 +9,7 @@ const Show = ({ auth, user, messages: initialMessages }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
+ 
     const channel = window.Echo.private(`chat.${auth.user.id}`);
     channel.listen(".MessageSent", (event) => {
       console.log("Received message:", event.message);
@@ -16,7 +17,7 @@ const Show = ({ auth, user, messages: initialMessages }) => {
     });
 
     return () => {
-      channel.stopListening("MessageSent");
+      channel.stopListening(".MessageSent");
     };
   }, [auth.user.id]);
 
