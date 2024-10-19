@@ -10,17 +10,13 @@ use Inertia\Inertia;
 
 class MessageController extends Controller
 {
-
-
     public function index()
     {
-        // Fetch all users except the current user
         $users = User::where('id', '!=', auth()->id())->get();
 
-        return Inertia::render('Messages/Index', [
-            'users' => $users,
-        ]);
+        return Inertia::render('Messages/Index', ['users' => $users]);
     }
+
     public function show(User $user)
     {
         $messages = $this->getMessages($user);
@@ -31,41 +27,24 @@ class MessageController extends Controller
         ]);
     }
 
-    // public function store(Request $request, User $user)
-    // {
-    //     $request->validate([
-    //         'content' => 'required|string',
-    //     ]);
+    public function store(Request $request, User $user)
+    {
+        $validatedData = $request->validate([
+            'content' => 'required|string',
+        ]);
 
-    //     $message = Message::create([
-    //         'sender_id' => auth()->id(),
-    //         'recipient_id' => $user->id,
-    //         'content' => $request->content,
-    //     ]);
+        $message = Message::create([
+            'sender_id' => auth()->id(),
+            'recipient_id' => $user->id,
+            'content' => $validatedData['content'],
+        ]);
 
-    //     broadcast(new MessageSent($message))->toOthers();
+        broadcast(new MessageSent($message))->toOthers();
 
-    //     return back()->with([
-    //         'messages' => $this->getMessages($user),
-    //     ]);
-    // }
+        return back();
+    }
 
-public function store(Request $request, User $user)
-{
-    $request->validate([
-        'content' => 'required|string',
-    ]);
-
-    $message = Message::create([
-        'sender_id' => auth()->id(),
-        'recipient_id' => $user->id,
-        'content' => $request->content,
-    ]);
-
-    broadcast(new MessageSent($message))->toOthers();
-
-    return back();
-}    private function getMessages(User $user)
+    private function getMessages(User $user)
     {
         return Message::where(function ($query) use ($user) {
             $query->where('sender_id', auth()->id())

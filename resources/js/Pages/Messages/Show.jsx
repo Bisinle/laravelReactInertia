@@ -1,9 +1,10 @@
+import "../../echo";
+import Pusher from "pusher-js";
 import React, { useState, useEffect } from "react";
 import { useForm, usePage } from "@inertiajs/inertia-react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
 const Show = ({ auth, user, messages: initialMessages }) => {
-  // const { messages: initialMessages } = usePage().props;
   const [messages, setMessages] = useState(initialMessages);
   const { data, setData, post, processing, reset } = useForm({
     content: "",
@@ -11,36 +12,34 @@ const Show = ({ auth, user, messages: initialMessages }) => {
 
   useEffect(() => {
     const channel = window.Echo.private(`chat.${auth.user.id}`);
-    channel.listen("message", (data) => {
-      setMessages((prevMessages) => [...prevMessages, data]);
+    channel.listen(".MessageSent", (event) => {
+      console.log("Received message:", event.message);
+      setMessages((prevMessages) => [...prevMessages, event.message]);
     });
 
     return () => {
-      channel.stopListening("message");
+      channel.stopListening("MessageSent");
     };
-  }, []);
+  }, [auth.user.id]);
+
 
   const submit = (e) => {
     e.preventDefault();
+    console.log("Submitting form...");
+    console.log("Route:", route("messages.store", user.id));
+
     post(route("messages.store", user.id), {
       preserveState: true,
       preserveScroll: true,
       onSuccess: () => {
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          {
-            id: Date.now(),
-            content: data.content,
-            sender_id: auth.user.id,
-            recipient_id: user.id,
-            created_at: new Date().toISOString(),
-          },
-        ]);
+        console.log("Message sent successfully");
         reset("content");
+      },
+      onError: (errors) => {
+        console.error("Error sending message:", errors);
       },
     });
   };
-
   return (
     <AuthenticatedLayout>
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
