@@ -28,21 +28,26 @@ class MessageController extends Controller
     }
 
     public function store(Request $request, User $user)
-    {
-        $validatedData = $request->validate([
-            'content' => 'required|string',
-        ]);
+{
+    $validatedData = $request->validate([
+        'content' => 'required|string',
+    ]);
 
-        $message = Message::create([
-            'sender_id' => auth()->id(),
-            'recipient_id' => $user->id,
-            'content' => $validatedData['content'],
-        ]);
+    $message = Message::create([
+        'sender_id' => auth()->id(),
+        'recipient_id' => $user->id,
+        'content' => $validatedData['content'],
+    ]);
 
-        broadcast(new MessageSent($message))->toOthers();
+    $messageWithSender = $message->load('sender');
 
-        return back();
-    }
+    broadcast(new MessageSent($messageWithSender))->toOthers();
+
+    return response()->json([
+        'message' => $messageWithSender,
+        'status' => 'success'
+    ], 201);
+}
 
     private function getMessages(User $user)
     {
